@@ -120,11 +120,15 @@ export const setupConnect = async (req: AuthRequest, res: Response): Promise<voi
       role: req.user!.role === "buyer" ? "both" : req.user!.role,
     });
 
+    // Use the server URL for return/refresh since mobile deep links may not work with Stripe
+    const serverUrl = env.CLIENT_URL.startsWith("http") ? env.CLIENT_URL : `https://${env.CLIENT_URL}`;
+    const baseUrl = serverUrl.includes("localhost") ? "https://artisanmarket.com" : serverUrl;
+
     // Create onboarding link
     const accountLink = await stripe.accountLinks.create({
       account: account.id,
-      refresh_url: `${env.CLIENT_URL}/seller/onboard/refresh`,
-      return_url: `${env.CLIENT_URL}/seller/onboard/complete`,
+      refresh_url: `${baseUrl}/seller/onboard/refresh`,
+      return_url: `${baseUrl}/seller/onboard/complete`,
       type: "account_onboarding",
     });
 
