@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
-    "start": "node src/index.ts",
+    "start": "node --import tsx src/index.ts",
     "seed": "tsx src/seeds/run.ts"
   },
   "devDependencies": {
@@ -21,7 +21,6 @@
     "@types/multer": "^2.0.0",
     "@types/node": "^25.3.0",
     "@types/nodemailer": "^7.0.11",
-    "@types/react": "~19.1.10",
     "nodemon": "^3.1.14",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3"
@@ -31,7 +30,6 @@
     "cloudinary": "^2.9.0",
     "cors": "^2.8.6",
     "dotenv": "^17.3.1",
-    "expo": "~54.0.33",
     "expo-server-sdk": "^6.0.0",
     "express": "^5.2.1",
     "express-rate-limit": "^8.2.1",
