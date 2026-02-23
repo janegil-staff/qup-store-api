@@ -94,4 +94,13 @@ router.post("/ai/search", auth, aiCtrl.search);
 router.get("/ai/recommendations", auth, aiCtrl.recommendations);
 router.post("/ai/describe", auth, aiCtrl.describe);
 
+// ─── Admin ────────────────────
+import * as adminCtrl from "../controllers/admin.controller.js";
+router.get("/admin/users", auth, adminCtrl.requireAdmin, adminCtrl.getUsers);
+router.patch("/admin/users/:id/ban", auth, adminCtrl.requireAdmin, adminCtrl.banUser);
+router.patch("/admin/users/:id/unban", auth, adminCtrl.requireAdmin, adminCtrl.unbanUser);
+router.get("/admin/products", auth, adminCtrl.requireAdmin, adminCtrl.getAdminProducts);
+router.delete("/admin/products/:id", auth, adminCtrl.requireAdmin, adminCtrl.removeProduct);
+router.get("/admin/orders/stats", auth, adminCtrl.requireAdmin, adminCtrl.getOrderStats);
+
 export default router;

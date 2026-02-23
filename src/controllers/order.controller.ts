@@ -1,6 +1,7 @@
 import { Response } from "express";
 import Order from "../models/Order.js";
 import Product from "../models/Product.js";
+import User from "../models/User.js";
 import { AuthRequest } from "../middleware/auth.js";
 import { sendSuccess, sendError, paginate } from "../utils/helpers.js";
 import env from "../config/env.js";
@@ -162,6 +163,27 @@ export const updateStatus = async (req: AuthRequest, res: Response): Promise<voi
     order.status = status;
     order.statusHistory.push({ status, timestamp: new Date(), note });
     await order.save();
+
+    // Send push notification to buyer
+    try {
+      const buyer = await User.findById(order.buyer);
+      const product = await Product.findById(order.product);
+      const productTitle = product?.title || "your item";
+      if (buyer?.pushToken) {
+        const { sendPushNotification } = await import("../services/push.service.js");
+        const messages: Record<string, { title: string; body: string }> = {
+          paid: { title: "Payment Confirmed ✓", body: `Your order for ${productTitle} has been confirmed.` },
+          processing: { title: "Order Processing", body: `Your order for ${productTitle} is being prepared.` },
+          shipped: { title: "Order Shipped! 📦", body: `Your order for ${productTitle} is on its way!` },
+          delivered: { title: "Order Delivered ✓", body: `${productTitle} has been delivered. Leave a review!` },
+          cancelled: { title: "Order Cancelled", body: `Your order for ${productTitle} has been cancelled.` },
+        };
+        const msg = messages[status];
+        if (msg) await sendPushNotification(buyer.pushToken, msg.title, msg.body, { orderId: order._id.toString(), type: "order_update" });
+      }
+    } catch (pushErr) {
+      console.error("Push notification failed:", pushErr);
+    }
 
     sendSuccess(res, { order });
   } catch (error: any) {

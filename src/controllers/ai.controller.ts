@@ -8,10 +8,7 @@ import env from "../config/env.js";
 const openai = new OpenAI({ apiKey: env.OPENAI_API_KEY });
 
 // POST /api/ai/search — semantic search
-export const search = async (
-  req: AuthRequest,
-  res: Response,
-): Promise<void> => {
+export const search = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const { query } = req.body;
 
@@ -62,10 +59,7 @@ Categories: Jewelry, Clothing, Home & Living, Art, Craft Supplies, Vintage, Acce
 };
 
 // GET /api/ai/recommendations
-export const recommendations = async (
-  req: AuthRequest,
-  res: Response,
-): Promise<void> => {
+export const recommendations = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     // Get user's favorites to understand preferences
     const user = await (await import("../models/User.js")).default
@@ -84,7 +78,10 @@ export const recommendations = async (
         quantity: { $gt: 0 },
         seller: { $ne: req.user!._id },
         _id: { $nin: user?.favorites || [] },
-        $or: [{ category: { $in: favCategories } }, { tags: { $in: favTags } }],
+        $or: [
+          { category: { $in: favCategories } },
+          { tags: { $in: favTags } },
+        ],
       })
         .sort({ favoriteCount: -1, createdAt: -1 })
         .limit(20)
@@ -107,10 +104,7 @@ export const recommendations = async (
 };
 
 // POST /api/ai/describe — generate listing description from text
-export const describe = async (
-  req: AuthRequest,
-  res: Response,
-): Promise<void> => {
+export const describe = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const { title, category, condition, materials } = req.body;
 
