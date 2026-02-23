@@ -84,6 +84,10 @@ const userSchema = new Schema<IUser>(
       type: String,
       default: "",
     },
+    stripeConnectCountry: {
+      type: String,
+      default: "",
+    },
     pushToken: {
       type: String,
       default: "",
@@ -145,7 +149,7 @@ const userSchema = new Schema<IUser>(
       select: false,
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 // Hash password before save
@@ -157,7 +161,7 @@ userSchema.pre("save", async function () {
 
 // Compare password method
 userSchema.methods.comparePassword = async function (
-  candidatePassword: string
+  candidatePassword: string,
 ): Promise<boolean> {
   return bcrypt.compare(candidatePassword, this.password);
 };

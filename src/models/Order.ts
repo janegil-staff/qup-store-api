@@ -85,6 +85,11 @@ const orderSchema = new Schema<IOrder>(
       required: true,
       min: 0,
     },
+    currency: {
+      type: String,
+      default: "NOK",
+      uppercase: true,
+    },
     status: {
       type: String,
       enum: ORDER_STATUSES,
